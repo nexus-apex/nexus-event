@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Attendees | NexusEvent{% endblock %}
+{% block page_title %}Attendees{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search attendees...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Ticket Type</option>
+      <option value="general" {% if status_filter == 'general' %}selected{% endif %}>General</option>
+      <option value="vip" {% if status_filter == 'vip' %}selected{% endif %}>VIP</option>
+      <option value="speaker" {% if status_filter == 'speaker' %}selected{% endif %}>Speaker</option>
+      <option value="sponsor" {% if status_filter == 'sponsor' %}selected{% endif %}>Sponsor</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/attendees/create/" class="btn btn-primary">+ New Attendee</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Email</th><th>Phone</th><th>Event Title</th><th>Ticket Type</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/attendees/{{ r.pk }}/edit/"><strong>{{ r.name }}</strong></a></td>
+        <td style="color:var(--muted)">{{ r.email|default:"-" }}</td>
+        <td>{{ r.phone|default:"-" }}</td>
+        <td>{{ r.event_title|default:"-" }}</td>
+        <td><span class="badge badge-blue">{{ r.get_ticket_type_display }}</span></td>
+        <td class="actions">
+          <a href="/attendees/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/attendees/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No attendees found.</p>
+    <a href="/attendees/create/" class="btn btn-primary" style="margin-top:1rem">Create Attendee</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
