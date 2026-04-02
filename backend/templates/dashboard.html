@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | NexusEvent{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-label">Total Events</div>
+    <div class="stat-value">{{ event_count }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Total Attendees</div>
+    <div class="stat-value" style="background:linear-gradient(135deg,#10b981,#06b6d4);-webkit-background-clip:text;background-clip:text">{{ attendee_count }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Total Venues</div>
+    <div class="stat-value" style="background:linear-gradient(135deg,#f59e0b,#f97316);-webkit-background-clip:text;background-clip:text">{{ venue_count }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Total Price</div>
+    <div class="stat-value" style="background:linear-gradient(135deg,#ef4444,#ec4899);-webkit-background-clip:text;background-clip:text">{{ event_total_price|floatformat:0 }}</div>
+  </div>
+</div>
+
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+    <h3>Recent Events</h3>
+    <a href="/events/create/" class="btn btn-primary btn-sm">+ New Event</a>
+  </div>
+  {% if recent %}
+  <table>
+    <thead>
+      <tr><th>Title</th><th>Event Type</th><th>Venue</th><th>Date</th><th>Capacity</th><th>Created</th></tr>
+    </thead>
+    <tbody>
+      {% for r in recent %}
+      <tr>
+        <td><a href="/events/{{ r.pk }}/edit/">{{ r.title }}</a></td>
+        <td><span class="badge badge-blue">{{ r.get_event_type_display }}</span></td><td>{{ r.venue|default:"-" }}</td><td style="color:var(--muted)">{{ r.date|date:"M d, Y"|default:"-" }}</td><td>{{ r.capacity|default:"-" }}</td><td style="color:var(--muted)">{{ r.created_at|date:"M d, Y" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No records yet.</p>
+    <a href="/events/create/" class="btn btn-primary" style="margin-top:1rem">Create First Event</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
